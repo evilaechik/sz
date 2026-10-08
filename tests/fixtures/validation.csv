@@ -1,0 +1,5 @@
+date,merchant,amount,category
+2026-10-07,"QA, China settlement",5000.25,Sales income
+2026-10-07,"QA, China settlement",5000.25,Sales income
+2026-02-30,Bad date,20,Software
+2026-10-07,Blank amount,,Inventory
