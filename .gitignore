@@ -2,5 +2,6 @@ node_modules
 dist
 .env
 .playwright-cli
+.codex-pptx-build/
 .DS_Store
 *.log

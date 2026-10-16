@@ -80,5 +80,6 @@ Browser storage preserves the local ledger, chat, draft, approvals, and audit ev
 - Security self-assessment PDF: `docs/submission/runway-guard-security-self-assessment.pdf`
 - Test case index: `docs/submission/runway-guard-test-cases.md`
 - Execution evidence: `docs/submission/evidence/`
+- Competition presentation: `docs/submission/presentation/runway-guard-competition-deck.pptx`
 - Demo-video recording script: `docs/submission/demo-video-script.md`
 - Demo screenshots: `output/playwright/`
