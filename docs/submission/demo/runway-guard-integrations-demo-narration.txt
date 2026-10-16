@@ -1,0 +1,17 @@
+url: http://127.0.0.1:5173/
+engine: openai
+model: gpt-4o-mini-tts
+voice: coral
+speed: 1.08
+instructions: Warm, clear, confident fintech product-demo narration. Keep a natural pace and add a short pause after each sentence.
+pronounce: Runway Guard=Runway Guard, Alipay=Ali pay, WeChat=We Chat, Stripe=Stripe
+
+Runway Guard brings banking, Stripe payments, and accounting adapters into one finance workspace.
+
+Owners can upload a CSV. Accepted rows enter the ledger and review queue immediately.
+
+The same controls work in Simplified Chinese.
+
+WeChat Pay and Alipay run consent-gated, read-only sandbox checks for merchant setup, settlement data, and signed callbacks.
+
+Every result becomes exportable evidence. No payment moves.

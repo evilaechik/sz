@@ -276,7 +276,7 @@ function App() {
     ]
     if (demoStep >= steps.length) {
       setDemoStep(0)
-      showToast('Guided demo reset')
+      showToast(locale === 'zh' ? '引导演示已重置。' : 'Guided demo reset')
       return
     }
     await runAgentQuestion(steps[demoStep])
@@ -292,13 +292,13 @@ function App() {
     event.target.value = ''
     if (!file) return
     if (requestLock.current) { showToast(locale === 'zh' ? '请等待助手完成，再导入数据。' : 'Wait for the agent to finish before importing new data.'); return }
-    if (file.size > 500000) { showToast('CSV limit: 500 KB. Split your file and retry.'); return }
+    if (file.size > 500000) { showToast(locale === 'zh' ? 'CSV 上限为 500 KB，请拆分文件后重试。' : 'CSV limit: 500 KB. Split your file and retry.'); return }
     const reader = new FileReader()
-    reader.onerror = () => showToast('Unable to read this file. Please try again.')
+    reader.onerror = () => showToast(locale === 'zh' ? '无法读取此文件，请重试。' : 'Unable to read this file. Please try again.')
     reader.onload = () => {
       const result = parseTransactionCsv(String(reader.result ?? ''))
       const merged = mergeTransactions(transactionRef.current, result.transactions)
-      if (transactionRef.current.length + merged.added.length > 1000) { showToast('Workspace limit: 1,000 transactions. No rows imported.'); return }
+      if (transactionRef.current.length + merged.added.length > 1000) { showToast(locale === 'zh' ? '工作区上限为 1,000 笔交易，未导入任何行。' : 'Workspace limit: 1,000 transactions. No rows imported.'); return }
       const next = [...merged.added, ...transactionRef.current]
       transactionRef.current = next
       setTransactions(next)
@@ -347,9 +347,9 @@ function App() {
       if (!response.ok) throw new Error('Evaluation unavailable')
       const result = await response.json() as Evaluation
       setEvaluation(result)
-      showToast(`${result.passed}/${result.total} agent scenarios passed`)
+      showToast(locale === 'zh' ? `${result.passed}/${result.total} 个助手场景已通过` : `${result.passed}/${result.total} agent scenarios passed`)
     } catch {
-      showToast('Evaluation service is unavailable')
+      showToast(locale === 'zh' ? '评估服务暂不可用。' : 'Evaluation service is unavailable')
     }
   }
 
@@ -362,9 +362,9 @@ function App() {
       const result = await response.json() as { events: SandboxEvent[] }
       setSandboxEvents((current) => [...result.events, ...current])
       setSources((current) => current.map((source) => source.id === provider ? { ...source, status: 'Connected', lastSync: 'Sandbox verified', records: 3 } : source))
-      showToast(`${provider === 'alipay' ? 'Alipay' : 'WeChat Pay'} sandbox evidence captured`)
+      showToast(locale === 'zh' ? `${provider === 'alipay' ? '支付宝' : '微信支付'}沙箱证据已记录。` : `${provider === 'alipay' ? 'Alipay' : 'WeChat Pay'} sandbox evidence captured`)
     } catch {
-      showToast('Sandbox service is unavailable')
+      showToast(locale === 'zh' ? '沙箱服务暂不可用。' : 'Sandbox service is unavailable')
     } finally { setSandboxBusy(false) }
   }
 
@@ -516,7 +516,7 @@ function WorkspaceView({
   if (activeView === 'Integrations') return <>
     <PageHeading kicker={locale === 'zh' ? '数据基础' : 'DATA FOUNDATION'} title={locale === 'zh' ? '数据连接' : 'Integrations'} copy={locale === 'zh' ? '统一银行、支付与会计数据后，智能助手才能进行分析和准备操作。' : 'Normalize banking, payments, and accounting data before the agent can reason or act.'} />
     <section className="integration-overview"><div><span>{zh ? '演示数据源' : 'Demo data sources'}</span><b>{sources.filter((source) => source.status === 'Connected').length}</b></div><div><span>{zh ? '可分析交易' : 'Analyzable transactions'}</span><b>{transactions.length}</b></div><div><span>{zh ? '待审核行' : 'Rows awaiting review'}</span><b className="coral-text">{transactions.filter((transaction) => transaction.status === 'Review').length}</b></div><label className="primary-button import-button"><Icon name="plus" /> {zh ? '导入 CSV' : 'Import CSV'}<input aria-label={zh ? '导入交易 CSV' : 'Import transactions CSV'} type="file" accept=".csv,text/csv" onChange={onImport}/></label></section>
-    <section className="integration-grid"><article className="panel source-list"><div className="panel-head"><div><p className="eyebrow">{t(locale, "CONNECTED SOURCES")}</p><h2>{t(locale, "Data adapters")}</h2></div><span className="policy-chip"><Icon name="shield" size={14}/> {t(locale, "Local demo only")}</span></div>{sources.map((source) => <div className="source-row" key={source.id}><div className={`source-badge ${source.color}`}>{source.name.charAt(0)}</div><div><b>{source.name}</b><p>{zh ? (source.id === 'wechat-pay' || source.id === 'alipay' ? '演示适配器 · 需要商户授权' : '本地样例适配器') : source.provider} · {source.records} {zh ? '条样例记录' : 'sample records'}</p></div><div className="source-status"><span>{locale === 'zh' ? (source.status === 'Connected' ? '演示已启用' : '未连接') : source.status === 'Connected' ? 'Demo active' : 'Not connected'}</span><small>{locale === 'zh' ? '本地模拟数据' : 'Local simulated data'}</small></div><button className="outline-button" disabled={sandboxBusy} onClick={() => source.id === 'wechat-pay' || source.id === 'alipay' ? onRunSandbox(source.id) : onSync(source.id)}>{source.id === 'wechat-pay' || source.id === 'alipay' ? (zh ? '运行沙箱' : 'Run sandbox') : (zh ? '检查演示' : 'Check demo')}</button></div>)}</article><article className="panel import-guide"><p className="eyebrow">{t(locale, "CSV CONTRACT")}</p><h2>{t(locale, "Bring your own data")}</h2><p>{t(locale, "Imports are read only in this prototype. The parser expects a header row with:")}</p><code>date, merchant, amount, category</code><a className="sample-link" href="/sample-transactions.csv" download>{t(locale, "Download sample CSV ")}<Icon name="arrow" size={14}/></a><div className="guide-check"><Icon name="check" size={15}/> {t(locale, "Valid rows become review items.")}</div><div className="guide-check"><Icon name="check" size={15}/> {t(locale, "Invalid rows are skipped, never silently posted.")}</div><div className="guide-check"><Icon name="check" size={15}/> {t(locale, "Imported rows persist in this browser. Rows are sent to the assistant when you ask a question.")}</div></article></section><article className="china-readiness"><p className="eyebrow">中国市场准备 / CHINA READINESS</p><h2>本地支付沙箱证据</h2><p>{t(locale, "Run safe, simulated payment checks for the submission. These test profiles never accept production API keys or make live payments.")}</p><div className="sandbox-actions"><button onClick={() => onRunSandbox('wechat-pay')} disabled={sandboxBusy}>运行微信支付沙箱</button><button onClick={() => onRunSandbox('alipay')} disabled={sandboxBusy}>运行支付宝沙箱</button>{sandboxEvents.length > 0 && <button className="secondary" onClick={onExportEvidence}>导出执行证据</button>}</div>{sandboxEvents.length > 0 && <div className="sandbox-result"><b>{sandboxEvents.length} logged checks</b><span>{sandboxEvents[0].operation} · {sandboxEvents[0].outcome}</span></div>}<div className="china-pills"><span>中文界面</span><span>中文财务提问</span><span>微信支付（沙箱）</span><span>支付宝（沙箱）</span></div></article>
+    <section className="integration-grid"><article className="panel source-list"><div className="panel-head"><div><p className="eyebrow">{t(locale, "CONNECTED SOURCES")}</p><h2>{t(locale, "Data adapters")}</h2></div><span className="policy-chip"><Icon name="shield" size={14}/> {t(locale, "Local demo only")}</span></div>{sources.map((source) => <div className="source-row" key={source.id}><div className={`source-badge ${source.color}`}>{source.name.charAt(0)}</div><div><b>{source.name}</b><p>{zh ? (source.id === 'wechat-pay' || source.id === 'alipay' ? '演示适配器 · 需要商户授权' : '本地样例适配器') : source.provider} · {source.records} {zh ? '条样例记录' : 'sample records'}</p></div><div className="source-status"><span>{locale === 'zh' ? (source.status === 'Connected' ? '演示已启用' : '未连接') : source.status === 'Connected' ? 'Demo active' : 'Not connected'}</span><small>{locale === 'zh' ? '本地模拟数据' : 'Local simulated data'}</small></div><button className="outline-button" disabled={sandboxBusy} onClick={() => source.id === 'wechat-pay' || source.id === 'alipay' ? onRunSandbox(source.id) : onSync(source.id)}>{source.id === 'wechat-pay' || source.id === 'alipay' ? (zh ? '运行沙箱' : 'Run sandbox') : (zh ? '检查演示' : 'Check demo')}</button></div>)}</article><article className="panel import-guide"><p className="eyebrow">{t(locale, "CSV CONTRACT")}</p><h2>{t(locale, "Bring your own data")}</h2><p>{t(locale, "Imports are read only in this prototype. The parser expects a header row with:")}</p><code>date, merchant, amount, category</code><a className="sample-link" href="/sample-transactions.csv" download>{t(locale, "Download sample CSV ")}<Icon name="arrow" size={14}/></a><div className="guide-check"><Icon name="check" size={15}/> {t(locale, "Valid rows become review items.")}</div><div className="guide-check"><Icon name="check" size={15}/> {t(locale, "Invalid rows are skipped, never silently posted.")}</div><div className="guide-check"><Icon name="check" size={15}/> {t(locale, "Imported rows persist in this browser. Rows are sent to the assistant when you ask a question.")}</div></article></section><article className="china-readiness"><p className="eyebrow">{zh ? '中国市场准备' : 'CHINA READINESS'}</p><h2>{zh ? '本地支付沙箱证据' : 'Local payment sandbox evidence'}</h2><p>{t(locale, "Run safe, simulated payment checks for the submission. These test profiles never accept production API keys or make live payments.")}</p><div className="sandbox-actions"><button onClick={() => onRunSandbox('wechat-pay')} disabled={sandboxBusy}>{zh ? '运行微信支付沙箱' : 'Run WeChat Pay sandbox'}</button><button onClick={() => onRunSandbox('alipay')} disabled={sandboxBusy}>{zh ? '运行支付宝沙箱' : 'Run Alipay sandbox'}</button>{sandboxEvents.length > 0 && <button className="secondary" onClick={onExportEvidence}>{zh ? '导出执行证据' : 'Export execution evidence'}</button>}</div>{sandboxEvents.length > 0 && <div className="sandbox-result"><b>{zh ? `已记录 ${sandboxEvents.length} 项检查` : `${sandboxEvents.length} logged checks`}</b><span>{t(locale, sandboxEvents[0].operation)} · {t(locale, sandboxEvents[0].outcome)}</span></div>}<div className="china-pills"><span>{zh ? '中文界面' : 'Chinese interface'}</span><span>{zh ? '中文财务提问' : 'Chinese finance questions'}</span><span>{zh ? '微信支付（沙箱）' : 'WeChat Pay (sandbox)'}</span><span>{zh ? '支付宝（沙箱）' : 'Alipay (sandbox)'}</span></div></article>
   </>
   if (activeView === 'Approvals') return <>
     <PageHeading kicker={zh ? '所有者控制' : 'OWNER CONTROL'} title={zh ? '审批中心' : 'Approval center'} copy={zh ? '所有操作仅在本地模拟，不会发送邮件或转账。' : 'All actions are local simulations. No emails or payments leave this workspace.'} />

@@ -4,6 +4,13 @@ Competition prototype for the FinTechathon International Track, Topic E: Small-b
 
 Runway Guard is a conversational cash-flow copilot for a small business. The current build uses synthetic source data, browser-local imports, and simulated financial actions.
 
+## Competition highlights
+
+- **One normalized finance workspace:** demo adapters represent banking, Stripe payments, and accounting data; owners can also upload their own CSV and immediately use accepted rows in the ledger, forecast, reconciliation queue, and agent context.
+- **An agent that can prepare product actions:** the assistant analyzes the current workspace, opens review queues, drafts a Northstar collection reminder, and prepares a supplier payment-date change. Consequential actions still wait for explicit owner confirmation.
+- **China-ready demonstration:** the complete workspace can switch to Simplified Chinese. WeChat Pay and Alipay use consent-gated, provider-scoped sandbox simulations for merchant setup, read-only settlement summaries, and signed callback verification.
+- **Submission-grade evidence:** policy evaluations, simulated provider logs, test cases, audit exports, security documentation, a presentation, and two narrated product demos are included in the repository.
+
 ## Demo story
 
 The Harbor & Bean owner discovers a projected cash shortfall. Runway Guard then:
@@ -82,6 +89,7 @@ Browser storage preserves the local ledger, chat, draft, approvals, and audit ev
 - Execution evidence: `docs/submission/evidence/`
 - Competition presentation: `docs/submission/presentation/runway-guard-competition-deck.pptx`
 - Narrated product demo: `docs/submission/demo/runway-guard-product-demo.mp4`
+- Narrated integrations and China-readiness demo: `docs/submission/demo/runway-guard-integrations-demo.mp4`
 - Demo poster, captions, and narration source: `docs/submission/demo/`
 - Demo-video recording script: `docs/submission/demo-video-script.md`
 - Demo screenshots: `output/playwright/`

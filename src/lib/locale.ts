@@ -72,7 +72,11 @@ export const chinese: Record<string, string> = {
   "Workspace initialized": "工作区已初始化",
   "Read-only completed": "只读分析已完成",
   "Action blocked": "操作已阻止",
-  "Confirmation required": "需要确认"
+  "Confirmation required": "需要确认",
+  "Connect simulated merchant account": "连接模拟商户账户",
+  "Read sandbox settlement summary": "读取沙箱结算摘要",
+  "Verify signed sandbox callback": "验证沙箱回调签名",
+  "passed": "通过",
 }
 
 export function t(locale: 'en' | 'zh', value: string) { return locale === 'zh' ? chinese[value] ?? value : value }
