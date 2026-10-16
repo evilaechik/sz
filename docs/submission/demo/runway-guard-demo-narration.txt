@@ -1,0 +1,15 @@
+url: http://127.0.0.1:5173/
+engine: openai
+model: gpt-4o-mini-tts
+voice: coral
+speed: 1.08
+instructions: Warm, clear, confident fintech product demo. Keep a calm and trustworthy pace.
+pronounce: Runway Guard=Runway Guard, Northstar=North star
+
+Runway Guard catches a $3,840 cash-buffer gap before it becomes a payroll problem.
+
+The agent reads the current ledger and prepares a Northstar collection reminder.
+
+It cannot send email or move money. The owner must confirm every action.
+
+The confirmation is recorded as a safe local simulation with a complete audit trail.

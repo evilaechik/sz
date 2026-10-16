@@ -3,5 +3,6 @@ dist
 .env
 .playwright-cli
 .codex-pptx-build/
+.codex-video-build/
 .DS_Store
 *.log

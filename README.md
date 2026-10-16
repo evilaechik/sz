@@ -81,5 +81,7 @@ Browser storage preserves the local ledger, chat, draft, approvals, and audit ev
 - Test case index: `docs/submission/runway-guard-test-cases.md`
 - Execution evidence: `docs/submission/evidence/`
 - Competition presentation: `docs/submission/presentation/runway-guard-competition-deck.pptx`
+- Narrated product demo: `docs/submission/demo/runway-guard-product-demo.mp4`
+- Demo poster, captions, and narration source: `docs/submission/demo/`
 - Demo-video recording script: `docs/submission/demo-video-script.md`
 - Demo screenshots: `output/playwright/`

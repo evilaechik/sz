@@ -1,0 +1,16 @@
+1
+00:00:00,350 --> 00:00:07,087
+Runway Guard catches a $3,840 cash-buffer gap before it becomes a payroll problem.
+
+2
+00:00:07,087 --> 00:00:12,494
+The agent reads the current ledger and prepares a Northstar collection reminder.
+
+3
+00:00:12,494 --> 00:00:17,778
+It cannot send email or move money. The owner must confirm every action.
+
+4
+00:00:17,778 --> 00:00:23,182
+The confirmation is recorded as a safe local simulation with a complete audit trail.
+
