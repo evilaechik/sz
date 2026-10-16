@@ -6,13 +6,12 @@ import { validateTransactions, sanitizeHistory } from './validation.js'
 import type { Transaction } from '../src/lib/finance.js'
 import type { AgentRun, ToolCall } from '../src/lib/agent.js'
 import { executeTool, localAgent, toolDefinitions, type SafeToolName } from './agentTools.js'
+import { createSandboxEvents, isSandboxProvider, type SandboxEvidence } from './sandbox.js'
 
 const app = express()
 const port = Number(process.env.PORT ?? 8787)
 const model = process.env.OPENAI_MODEL ?? 'gpt-5.4-mini'
 const reasoningEffort = process.env.OPENAI_REASONING_EFFORT ?? 'low'
-type SandboxProvider = 'alipay' | 'wechat-pay'
-type SandboxEvidence = { id: string; provider: SandboxProvider; operation: string; outcome: 'passed'; timestamp: string; detail: string }
 const sandboxEvidence: SandboxEvidence[] = []
 
 app.use(express.json({ limit: '2mb' }))
@@ -54,15 +53,9 @@ app.post('/api/evaluate', (_request, response) => {
 })
 
 app.post('/api/sandbox/run', (request, response) => {
-  const provider = request.body?.provider as SandboxProvider
-  if (provider !== 'alipay' && provider !== 'wechat-pay') return response.status(400).json({ error: 'Choose Alipay or WeChat Pay.' })
-  const label = provider === 'alipay' ? 'Alipay sandbox' : 'WeChat Pay sandbox'
-  const timestamp = new Date().toISOString()
-  const events: SandboxEvidence[] = [
-    { id: `${provider}-connect-${Date.now()}`, provider, operation: 'Connect simulated merchant account', outcome: 'passed', timestamp, detail: `${label} test profile activated; no live credentials or customer data were used.` },
-    { id: `${provider}-balance-${Date.now()}`, provider, operation: 'Read sandbox settlement summary', outcome: 'passed', timestamp, detail: 'Read-only balance and settlement metadata request completed.' },
-    { id: `${provider}-webhook-${Date.now()}`, provider, operation: 'Verify signed sandbox callback', outcome: 'passed', timestamp, detail: 'Sandbox callback signature verification simulated successfully.' },
-  ]
+  const provider = request.body?.provider
+  if (!isSandboxProvider(provider)) return response.status(400).json({ error: 'Choose Alipay or WeChat Pay.' })
+  const events = createSandboxEvents(provider)
   sandboxEvidence.unshift(...events)
   response.json({ provider, status: 'connected', events })
 })

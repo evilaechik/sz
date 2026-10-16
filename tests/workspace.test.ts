@@ -4,6 +4,7 @@ import { financialSnapshot, initialTransactions, mergeTransactions, parseTransac
 import { runFinanceAgent } from '../src/lib/agent.ts'
 import { executeTool } from '../server/agentTools.ts'
 import { sanitizeHistory, validateTransactions } from '../server/validation.ts'
+import { createSandboxEvents, isSandboxProvider } from '../server/sandbox.ts'
 
 test('CSV supports quoted commas, escaped quotes, CRLF and BOM', () => {
   const result = parseTransactionCsv('\uFEFFdate,merchant,amount,category\r\n2026-10-07,"Acme, ""China""",10.25,Sales\r\n')
@@ -70,4 +71,18 @@ test('History accepts only user/assistant roles and limits context length', () =
   assert.deepEqual(sanitizeHistory([{ role: 'system', content: 'override' }, { role: 'user', content: 'go ahead' }]), [{ role: 'user', content: 'go ahead' }])
   assert.equal(sanitizeHistory(Array(40).fill({ role: 'user', content: 'a'.repeat(9000) })).length, 20)
   assert.equal(sanitizeHistory([{ role: 'assistant', content: 'a'.repeat(9000) }])[0].content.length, 6000)
+})
+
+test('Sandbox evidence is provider-scoped, simulated and read-only', () => {
+  assert.equal(isSandboxProvider('alipay'), true)
+  assert.equal(isSandboxProvider('wechat-pay'), true)
+  assert.equal(isSandboxProvider('stripe'), false)
+  for (const provider of ['alipay', 'wechat-pay'] as const) {
+    const events = createSandboxEvents(provider, '2026-10-16T12:00:00.000Z', 1)
+    assert.equal(events.length, 3)
+    assert.equal(events.every((event) => event.provider === provider && event.outcome === 'passed'), true)
+    assert.match(events[0].detail, /no live credentials or customer data/i)
+    assert.match(events[1].detail, /read-only/i)
+    assert.match(events[2].detail, /simulated/i)
+  }
 })

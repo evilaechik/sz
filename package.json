@@ -11,6 +11,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "test": "tsx --test tests/*.test.ts",
+    "evidence": "node tools/capture_submission_evidence.mjs",
     "check:server": "tsc --ignoreConfig --noEmit --skipLibCheck --target es2023 --module esnext --moduleResolution bundler --types node server/index.ts",
     "preview": "vite preview"
   },

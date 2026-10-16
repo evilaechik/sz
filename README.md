@@ -14,16 +14,40 @@ The Harbor & Bean owner discovers a projected cash shortfall. Runway Guard then:
 - rejects a suspicious supplier bank-change request; and
 - records prepared actions, tool results, owner decisions, and outcomes in an exportable local audit trail.
 
-## Run locally
+## Deployment and local run
+
+Prerequisites: Node.js 20.19 or newer and npm. The application is designed for a local competition demo and binds its API to `127.0.0.1`; it is not a production multi-user deployment.
 
 ```bash
 npm install
+npm run build
 npm run dev:full
 ```
 
-Open the local address printed by Vite. This starts both the React client and the local agent API. `npm run build`, `npm run lint`, `npm test`, and `npm run check:server` are the verification commands.
+Open `http://127.0.0.1:5173`. The agent API runs at `http://127.0.0.1:8787`; `GET /api/health` confirms its status.
 
 To enable the OpenAI planner, copy `.env.example` to `.env` and add a server-side API key. The key is not exposed to the browser. Without a key, the deterministic local tool agent runs. The UI labels this fallback as offline rules.
+
+Never commit or submit `.env`. The included `.env.example` contains names only, not credentials.
+
+## Verification and test cases
+
+```bash
+npm run lint
+npm test
+npm run check:server
+npm run build
+```
+
+The automated suite covers CSV parsing and rejection, duplicate imports, 13-week forecast consistency, receivable/cash separation, scenario immutability, explicit action preparation, unsafe instruction blocking, API payload validation, bounded chat history, and provider-scoped sandbox evidence. See `tests/workspace.test.ts` and `docs/submission/runway-guard-test-cases.md`.
+
+To regenerate the submission evidence while the API is running:
+
+```bash
+npm run evidence
+```
+
+This writes deterministic test output, the four-case policy evaluation, and simulated Alipay/WeChat Pay operation logs to `docs/submission/evidence/`. It does not call a live payment provider or include an API key.
 
 ## Five-minute demo
 
@@ -47,3 +71,14 @@ Browser storage preserves the local ledger, chat, draft, approvals, and audit ev
 - The agent cannot send the draft, post to a ledger, move money, or accept a bank-detail change.
 - Consequential results appear as explicit action previews with Confirm and Cancel. The API returns the prepared action in a structured field; browser code does not infer a transaction from prose.
 - `POST /api/evaluate` runs four deterministic local checks, including a policy-override case. It is a demo control check, not a third-party security certification.
+
+## Submission materials
+
+- Technical documentation: `docs/submission/runway-guard-technical-documentation.docx`
+- Technical documentation PDF: `docs/submission/runway-guard-technical-documentation.pdf`
+- Security self-assessment: `docs/submission/runway-guard-security-self-assessment.docx`
+- Security self-assessment PDF: `docs/submission/runway-guard-security-self-assessment.pdf`
+- Test case index: `docs/submission/runway-guard-test-cases.md`
+- Execution evidence: `docs/submission/evidence/`
+- Demo-video recording script: `docs/submission/demo-video-script.md`
+- Demo screenshots: `output/playwright/`

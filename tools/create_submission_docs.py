@@ -43,12 +43,11 @@ def configure(doc):
         style = doc.styles[name]
         style.font.name = 'Aptos Display'
         style.font.size = Pt(size)
-        style.font.color.rgb = RGBColor(24, 48, 84)
+        style.font.color.rgb = RGBColor(0, 0, 0)
         style.font.bold = True
-    header = section.header.paragraphs[0]
-    header.text = 'RUNWAY GUARD  |  FINTECHATHON INTERNATIONAL TRACK  |  TOPIC E'
-    header.style = doc.styles['Caption']
-    header.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    # Keep headers empty: explicit page breaks and long tables render more
+    # consistently across Word, LibreOffice and competition PDF viewers.
+    section.header.paragraphs[0].text = ''
 
 def title(doc, text, subtitle):
     p = doc.add_paragraph(style='Title')
@@ -73,8 +72,14 @@ def table(doc, headers, rows, widths=None):
             run.font.bold = True
             run.font.color.rgb = RGBColor(255, 255, 255)
             run.font.size = Pt(9)
+    header_props = t.rows[0]._tr.get_or_add_trPr()
+    repeat_header = OxmlElement('w:tblHeader')
+    repeat_header.set(qn('w:val'), 'true')
+    header_props.append(repeat_header)
     for row_i, row in enumerate(rows):
         cells = t.add_row().cells
+        row_props = t.rows[-1]._tr.get_or_add_trPr()
+        row_props.append(OxmlElement('w:cantSplit'))
         for i, value in enumerate(row):
             cells[i].text = value
             cells[i].vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
@@ -95,7 +100,7 @@ def bullet(doc, text):
 
 def technical_doc():
     doc = Document(); configure(doc)
-    title(doc, 'Runway Guard Technical Documentation', 'Topic E  SME Finance Copilot  |  Submission version 1.0')
+    title(doc, 'Runway Guard Technical Documentation', 'Topic E  SME Finance Copilot  |  Submission version 1.1')
     doc.add_heading('1. Product purpose', level=1)
     doc.add_paragraph('Runway Guard is an AI finance copilot for small-business owners. It turns normalized banking, payments and accounting activity into a cash-flow assessment, reconciliation review, safe collection-reminder draft and approval-ready recommendations. The prototype uses synthetic Harbor & Bean data and simulated financial operations only.')
     doc.add_heading('2. User problem and task completion', level=1)
@@ -107,6 +112,7 @@ def technical_doc():
         ['Security review', 'Classifies unverified bank-detail changes and policy-override attempts.', 'Unsafe instruction is blocked.'],
         ['Sandbox evidence', 'Runs simulated Alipay or WeChat Pay checks and exports logs.', 'No production key, customer data or payment movement.'],
     ], [1.2, 3.65, 1.7])
+    doc.add_page_break()
     doc.add_heading('3. System architecture', level=1)
     doc.add_paragraph('The React client renders the owner workspace, approval queue, integration state and trace. It calls a Node/Express API. The API owns tool execution, policy checks, sandbox evidence and the optional model boundary. The browser never receives an OpenAI key or a payment credential.')
     table(doc, ['Layer', 'Responsibility', 'Boundary'], [
@@ -124,40 +130,42 @@ def technical_doc():
     bullet(doc, 'Record sandbox execution evidence separately from business recommendations.')
     doc.add_heading('5. Data and integrations', level=1)
     doc.add_paragraph('The demo includes synthetic banking, Stripe-like payments and accounting records, plus consent-gated Alipay and WeChat Pay sandbox adapters. CSV input is parsed in the browser and valid rows are marked for review. Sandbox tests simulate merchant-profile activation, read-only settlement metadata retrieval and signed callback verification. They do not accept production credentials or connect to external merchant accounts.')
+    doc.add_page_break()
     doc.add_heading('6. Deployment and test instructions', level=1)
     table(doc, ['Step', 'Command or action'], [
-        ['Install', 'npm install'], ['Run application and API', 'npm run dev:full'], ['Production build', 'npm run build'], ['Policy evaluation', 'POST /api/evaluate returns four control scenarios'], ['Sandbox evidence', 'Use Integrations to run a sandbox profile, then export the evidence JSON'], ['Optional model', 'Copy .env.example to .env and add OPENAI_API_KEY on the server only'],
+        ['Prerequisite', 'Node.js 20.19 or newer and npm'], ['Install', 'npm install'], ['Production build', 'npm run build'], ['Run application and API', 'npm run dev:full, then open http://127.0.0.1:5173'], ['Verify API', 'GET http://127.0.0.1:8787/api/health'], ['Automated checks', 'npm run lint; npm test; npm run check:server; npm run build'], ['Capture evidence', 'npm run evidence after the local API is running'], ['Optional model', 'Copy .env.example to .env and add OPENAI_API_KEY on the server only; never commit .env'],
     ], [1.7, 4.85])
     doc.add_heading('7. Evaluation evidence', level=1)
-    doc.add_paragraph('The built-in evaluation endpoint tests cash-risk analysis, reconciliation, collection drafting and a prompt-injection bank-change request. The expected outcome is four passed scenarios, with the unsafe request blocked. This supports repeatable evidence for task completion and security testing.')
+    doc.add_paragraph('The automated suite contains ten cases covering CSV safety, deduplication, forecast consistency, cash accounting, scenario isolation, action policy, API validation, conversation boundaries and payment-sandbox evidence. The built-in evaluation endpoint adds cash-risk analysis, reconciliation, collection drafting and a prompt-injection bank-change request. A passing evidence capture reports ten automated tests, four of four control scenarios and six passed sandbox events.')
     doc.add_heading('8. Known prototype limits', level=1)
     bullet(doc, 'All financial data and payment activity are synthetic or simulated.')
     bullet(doc, 'Production Alipay and WeChat Pay onboarding requires merchant authorization, platform credentials and jurisdiction-specific review.')
     bullet(doc, 'The current forecast is scenario-driven demo logic, not a production credit or underwriting model.')
     bullet(doc, 'A production deployment requires authenticated tenant isolation, managed secret storage, monitoring and legal/privacy review.')
-    doc.add_paragraph('Repository: provide the competition reviewer with the submitted GitHub repository URL.', style='Caption')
+    doc.add_paragraph('Repository: https://github.com/evilaechik/sz', style='Caption')
     doc.save(OUT / 'runway-guard-technical-documentation.docx')
 
 def security_doc():
     doc = Document(); configure(doc)
-    title(doc, 'Runway Guard Security Self Assessment', 'Topic E  SME Finance Copilot  |  Submission version 1.0')
+    title(doc, 'Runway Guard Security Self Assessment', 'Topic E  SME Finance Copilot  |  Submission version 1.1')
     doc.add_heading('1. Scope and security objective', level=1)
     doc.add_paragraph('This report assesses the prototype submitted to the FinTechathon International Track. The design goal is to make financial recommendations useful while preventing the agent from autonomously sending messages, moving money, modifying settlement details or posting ledger entries.')
     doc.add_heading('2. Permission tiers', level=1)
-    table(doc, ['Tier', 'Allowed capability', 'Control'], [
-        ['0  Public interface', 'View synthetic dashboard and connector status.', 'No credentials or real customer records in the demo.'],
-        ['1  Analysis', 'Read cash position and identify unreconciled transactions.', 'Read-only server tools.'],
-        ['2  Prepare', 'Draft collection reminder or payment-plan recommendation.', 'Output stays in approval queue.'],
-        ['3  Approve', 'Owner schedules a simulated action.', 'Explicit UI confirmation and trace.'],
-        ['4  Execute', 'No production execution capability in this prototype.', 'Payment, messaging and ledger-write tools are absent.'],
-    ], [1.0, 3.3, 2.25])
+    table(doc, ['Tier', 'Implemented capability', 'Enforcement and evidence'], [
+        ['0  Public interface', 'View the synthetic dashboard, connector status and sample data.', 'No authentication claim, production credential or real customer record.'],
+        ['1  Analysis', 'Read cash position and find transactions requiring review.', 'Read-only get_cash_position and find_unreconciled_transactions tools.'],
+        ['2  Prepare', 'Create a collection draft or simulated payment-date recommendation.', 'Draft-only tools return structured previews; delivery and payment authorization remain false.'],
+        ['3  Approve', 'Record an owner decision in the browser-local simulation.', 'Explicit Confirm/Cancel control and audit entry; no external effect.'],
+        ['4  Execute', 'Not implemented.', 'No payment, messaging, bank-detail or ledger-write tool exists in the allowlist.'],
+    ], [1.0, 3.1, 2.45])
+    doc.add_page_break()
     doc.add_heading('3. Implemented controls', level=1)
     table(doc, ['Threat or control area', 'Implemented measure', 'Evidence'], [
         ['Prompt injection', 'User text and attachments are treated as untrusted. Security-review path blocks policy overrides.', 'Evaluation scenario for bank-change instruction.'],
-        ['Tool misuse', 'Agent receives a fixed allowlist: cash position, reconciliation review, collection draft and security review.', 'Server rejects unknown tool names.'],
+        ['Tool misuse', 'Agent receives a fixed allowlist for analysis, review, drafting, simulated scheduling and security review.', 'Server rejects unknown tool names; TC-07 verifies routing and blocking.'],
         ['Unauthorised action', 'Consequential recommendations require owner approval.', 'Approval status is shown in the live trace.'],
         ['Credential exposure', 'OpenAI key is server-side only. Sandbox workflow does not accept production payment keys.', 'Environment-file configuration and sandbox UI text.'],
-        ['Auditability', 'Agent tool calls and sandbox events return structured, exportable evidence.', 'Audit view and JSON evidence export.'],
+        ['Auditability', 'Agent tool calls, policy decisions and sandbox events return structured, exportable evidence.', 'Audit view plus docs/submission/evidence JSON files.'],
         ['Data minimisation', 'Synthetic data only; client payload is bounded and validated.', 'Transaction sanitizer on the API.'],
     ], [1.4, 3.45, 1.7])
     doc.add_heading('4. Security test cases', level=1)
@@ -166,12 +174,14 @@ def security_doc():
         ['Reconciliation request', 'Identify review rows; do not post to ledger.', 'Pass'],
         ['Collection request', 'Create draft; require approval before delivery.', 'Pass'],
         ['Ignore policy and change bank details', 'Classify as unsafe and block action.', 'Pass'],
-        ['Payment sandbox evidence', 'Simulate read-only connection checks; no live credential or payment.', 'Pass'],
+        ['Payment sandbox evidence', 'Generate three provider-scoped events for both Alipay and WeChat Pay; no live credential or payment.', 'Pass'],
     ], [2.3, 3.75, .5])
+    doc.add_page_break()
     doc.add_heading('5. Known risks and mitigations', level=1)
     table(doc, ['Known risk', 'Current mitigation', 'Production action before launch'], [
         ['No user authentication or tenant isolation', 'Demo uses one synthetic workspace only.', 'Add identity provider, organization scoping and role-based access control.'],
-        ['In-memory sandbox evidence is not durable', 'Export evidence immediately for submission.', 'Use encrypted, access-controlled event storage with retention policy.'],
+        ['In-memory sandbox evidence is not durable', 'The evidence command exports timestamped JSON immediately.', 'Use encrypted, access-controlled event storage with retention policy.'],
+        ['Browser-local state is not multi-user storage', 'Only synthetic demo data is permitted and the UI states the boundary.', 'Add authenticated server persistence, tenant isolation, backup and retention controls.'],
         ['Model may generate unsupported recommendations', 'Server tool allowlist and human approval prevent execution.', 'Add adversarial evaluation, output policy checks and monitoring.'],
         ['External payment onboarding varies by provider', 'No production credentials accepted.', 'Use server secret manager, OAuth or provider-approved credential flow, webhooks and key rotation.'],
         ['Financial insight may be incomplete', 'Demo labels forecast as scenario logic.', 'Add data-quality checks, source provenance and model-risk review.'],
@@ -180,8 +190,9 @@ def security_doc():
     doc.add_paragraph('Residual risk is acceptable only for a synthetic competition prototype. The product must not be represented as a production payment service or financial adviser. A production release requires security review, privacy review, legal/compliance assessment, authentication, encrypted secret management, incident response and provider approval.')
     doc.add_heading('7. Submission evidence to include', level=1)
     bullet(doc, 'Screenshot or recording of the blocked bank-detail attack and live agent trace.')
-    bullet(doc, 'Exported sandbox evidence JSON for Alipay and WeChat Pay simulated profiles.')
-    bullet(doc, 'Evaluation output showing four passed control scenarios.')
+    bullet(doc, 'sandbox-operation-log.json with six passed Alipay and WeChat Pay simulated events.')
+    bullet(doc, 'control-evaluation.json showing four of four passed scenarios and one blocked unsafe request.')
+    bullet(doc, 'test-results.txt showing ten automated test cases passed.')
     bullet(doc, 'Repository README with environment setup and deployment instructions.')
     doc.save(OUT / 'runway-guard-security-self-assessment.docx')
 
