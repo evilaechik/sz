@@ -2,16 +2,16 @@
 > sz-finathon@0.0.0 test
 > tsx --test tests/*.test.ts
 
-✔ CSV supports quoted commas, escaped quotes, CRLF and BOM (1.700958ms)
-✔ CSV rejects blank/non-finite amounts, invalid dates, extra columns and unclosed quotes (0.142083ms)
-✔ CSV deduplicates within a file and across repeated imports (0.096834ms)
-✔ Forecast has 13 weeks and imported cash agrees with the agent tool (9.20775ms)
-✔ An imported receivable remains visible but cannot inflate available cash (0.177333ms)
-✔ Scenarios only model cash and do not mutate the ledger (0.095833ms)
-✔ Action preparation is explicit, read-only and blocks unsafe requests (0.321ms)
-✔ API accepts empty ledgers, rejects truncation and invalid/duplicate rows (0.179542ms)
-✔ History accepts only user/assistant roles and limits context length (0.113709ms)
-✔ Sandbox evidence is provider-scoped, simulated and read-only (0.226708ms)
+✔ CSV supports quoted commas, escaped quotes, CRLF and BOM (1.675333ms)
+✔ CSV rejects blank/non-finite amounts, invalid dates, extra columns and unclosed quotes (0.133667ms)
+✔ CSV deduplicates within a file and across repeated imports (0.090167ms)
+✔ Forecast has 13 weeks and imported cash agrees with the agent tool (27.723875ms)
+✔ An imported receivable remains visible but cannot inflate available cash (0.122875ms)
+✔ Scenarios only model cash and do not mutate the ledger (0.067333ms)
+✔ Action preparation is explicit, read-only and blocks unsafe requests (0.299667ms)
+✔ API accepts empty ledgers, rejects truncation and invalid/duplicate rows (0.169ms)
+✔ History accepts only user/assistant roles and limits context length (0.109333ms)
+✔ Sandbox evidence is provider-scoped, simulated and read-only (0.219833ms)
 ℹ tests 10
 ℹ suites 0
 ℹ pass 10
@@ -19,4 +19,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 117.043166
+ℹ duration_ms 118.839208

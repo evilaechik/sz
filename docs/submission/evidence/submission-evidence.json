@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-16T19:36:22.501Z",
+  "generatedAt": "2026-10-16T19:38:56.324Z",
   "project": "Runway Guard",
   "topic": "E - SME Finance Copilot",
   "repository": "https://github.com/evilaechik/sz",
-  "commit": "00986d1842ed5f6feb2564e206bea0dfa2ef9701",
+  "commit": "60a86fd0062ef4b5e339a6fc5f52865e0af19675",
   "environment": "Local synthetic competition demo",
   "safetyStatement": "No live payment provider, production credential, customer record, email delivery, ledger posting or money movement was used.",
   "automatedTests": {
@@ -50,58 +50,58 @@
         "actionBlocked": true
       }
     ],
-    "generatedAt": "2026-10-16T19:36:22.463Z"
+    "generatedAt": "2026-10-16T19:38:56.295Z"
   },
   "sandboxEvidence": {
-    "generatedAt": "2026-10-16T19:36:22.480Z",
+    "generatedAt": "2026-10-16T19:38:56.310Z",
     "environment": "simulated sandbox only",
     "evidence": [
       {
-        "id": "alipay-connect-1792179382479",
+        "id": "alipay-connect-1792179536309",
         "provider": "alipay",
         "operation": "Connect simulated merchant account",
         "outcome": "passed",
-        "timestamp": "2026-10-16T19:36:22.479Z",
+        "timestamp": "2026-10-16T19:38:56.309Z",
         "detail": "Alipay sandbox test profile activated; no live credentials or customer data were used."
       },
       {
-        "id": "alipay-balance-1792179382479",
+        "id": "alipay-balance-1792179536309",
         "provider": "alipay",
         "operation": "Read sandbox settlement summary",
         "outcome": "passed",
-        "timestamp": "2026-10-16T19:36:22.479Z",
+        "timestamp": "2026-10-16T19:38:56.309Z",
         "detail": "Read-only balance and settlement metadata request completed."
       },
       {
-        "id": "alipay-webhook-1792179382479",
+        "id": "alipay-webhook-1792179536309",
         "provider": "alipay",
         "operation": "Verify signed sandbox callback",
         "outcome": "passed",
-        "timestamp": "2026-10-16T19:36:22.479Z",
+        "timestamp": "2026-10-16T19:38:56.309Z",
         "detail": "Sandbox callback signature verification simulated successfully."
       },
       {
-        "id": "wechat-pay-connect-1792179382478",
+        "id": "wechat-pay-connect-1792179536308",
         "provider": "wechat-pay",
         "operation": "Connect simulated merchant account",
         "outcome": "passed",
-        "timestamp": "2026-10-16T19:36:22.478Z",
+        "timestamp": "2026-10-16T19:38:56.308Z",
         "detail": "WeChat Pay sandbox test profile activated; no live credentials or customer data were used."
       },
       {
-        "id": "wechat-pay-balance-1792179382478",
+        "id": "wechat-pay-balance-1792179536308",
         "provider": "wechat-pay",
         "operation": "Read sandbox settlement summary",
         "outcome": "passed",
-        "timestamp": "2026-10-16T19:36:22.478Z",
+        "timestamp": "2026-10-16T19:38:56.308Z",
         "detail": "Read-only balance and settlement metadata request completed."
       },
       {
-        "id": "wechat-pay-webhook-1792179382478",
+        "id": "wechat-pay-webhook-1792179536308",
         "provider": "wechat-pay",
         "operation": "Verify signed sandbox callback",
         "outcome": "passed",
-        "timestamp": "2026-10-16T19:36:22.478Z",
+        "timestamp": "2026-10-16T19:38:56.308Z",
         "detail": "Sandbox callback signature verification simulated successfully."
       }
     ]
