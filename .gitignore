@@ -4,5 +4,6 @@ dist
 .playwright-cli
 .codex-pptx-build/
 .codex-video-build/
+final-submission/
 .DS_Store
 *.log
